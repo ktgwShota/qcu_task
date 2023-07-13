@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="../detail_style.css">
+</head>
+<body>
+  <div id="mainBox">
+    <h1 style="text-align: center; font-size: 25px;">タスク詳細</h1>
+    <div id="updateContent">
+      <form action="/task/<%= task_id %>" method="POST">
+        <input type="hidden" name="_method" value="PATCH">
+        <input type="text" name="title" value="<%= task['title'] %>">
+        <br/>
+        <label for="name">担当：</label>
+        <select name="name">
+          <option value="加藤" <% if task['name'] == '加藤' then %>selected<% end %>>加藤</option>
+          <option value="福嶋" <% if task['name'] == '福嶋' then %>selected<% end %>>福嶋</option>
+        </select>
+        <br/>
+        <label for="section">セクション：</label>
+        <select name="section">
+          <option value="sec_1" <% if task['section'] == 'sec_1' then %>selected<% end %>>sec_1</option>
+          <option value="sec_2" <% if task['section'] == 'sec_2' then %>selected<% end %>>sec_2</option>
+          <option value="sec_3" <% if task['section'] == 'sec_3' then %>selected<% end %>>sec_3</option>
+        </select>
+        <br/>
+        <label for="text">内容：</label>
+        <textarea name="text"><%= task['text'] %></textarea>
+        <br/>
+        <label for="start">開始日：</label>
+        <input type="date" name="start" value="<%= task['start'] %>">
+        <br/>
+        <label for="fixed">期日：</label>
+        <input type="date" name="fixed" value="<%= task['fixed'] %>">
+        <br/>
+        <label for="notion">notion：</label>
+        <input type="text" name="notion" value="<%= task['notion'] %>">
+        <br/>
+        <label for="slack">slack：</label>
+        <input type="text" name="slack" value="<%= task['slack'] %>">
+        <label for="status">ステータス：</label>
+        <select name="status">
+          <option value="未着手" <% if task['status'] == '未着手' then %>selected<% end %>>未着手</option>
+          <option value="待機中" <% if task['status'] == '待機中' then %>selected<% end %>>待機中</option>
+          <option value="進行中" <% if task['status'] == '進行中' then %>selected<% end %>>進行中</option>
+          <option value="DONE" <% if task['status'] == 'DONE' then %>selected<% end %>>DONE</option>
+        </select>
+        <label for="progress">進捗：</label>
+        <select name="progress">
+          <option value="未設定" <% if task['progress'] == '未設定' then %>selected<% end %>>未設定</option>
+          <option value="入稿前対応中" <% if task['progress'] == '入稿前対応中' then %>selected<% end %>>入稿前対応中</option>
+          <option value="入稿前対応" <% if task['progress'] == '入稿前対応' then %>selected<% end %>>YAML作成中</option>
+          <option value="QA0回目" <% if task['progress'] == 'QA0回目' then %>selected<% end %>>QA0回目</option>
+          <option value="QA1回目" <% if task['progress'] == 'QA1回目' then %>selected<% end %>>QA1回目</option>
+          <option value="QA2回目" <% if task['progress'] == 'QA2回目' then %>selected<% end %>>QA2回目</option>
+          <option value="配信設定" <% if task['progress'] == '配信設定' then %>selected<% end %>>配信設定</option>
+          <option value="実機確認" <% if task['progress'] == '実機確認' then %>selected<% end %>>実機確認</option>
+        </select>
+        <label for="cost">工数：</label>
+        <select name="cost">
+          <% (1..40).each do |i| %>
+            <option value="<%= i %>" <% if task['cost'].to_i == i then %> selected <% end %>><%= i %></option>
+          <% end %>
+        </select>
+        <div>タスクID： <%= task_id %></div>
+      </form>
+    </div>
+    <div id="taskList"><a href="/">タスク一覧へ戻る</a></div>
+    <form action="/task/<%= task_id %>" method="POST" id="deleteForm">
+      <input type="hidden" name="_method" value="DELETE">
+      <input type="submit" value="削除" id="delete">
+    </form>
+  </div>
+<script>
+  const form = document.querySelector('form');
+  form.addEventListener('change', () => {
+    form.submit();
+  });
+  const deleteButton = document.getElementById('delete');
+  const deleteForm = document.getElementById('deleteForm');
+  deleteButton.addEventListener('click', (e) => {
+    e.preventDefault();
+    const confirmation = confirm('本当に削除しますか？\nこのデータは完全に削除されます。');
+    if (confirmation && deleteForm) {
+      deleteForm.submit();
+    }
+  });
+</script>
+
+</body>
+</html>

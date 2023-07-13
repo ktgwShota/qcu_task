@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="add_style.css">
+</head>
+<body>
+  <div id="mainBox">
+    <h1 style="text-align: center; font-size: 25px;">タスク追加</h1>
+    <form action="/form" method="post">
+      <label for="name">担当：</label>
+      <select name="name">
+        <option value="加藤">加藤</option>
+        <option value="福嶋">福嶋</option>
+      </select>
+      <br/>
+      <label for="section">セクション：</label>
+      <select name="section">
+        <option value="sec_1">sec_1</option>
+        <option value="sec_2">sec_2</option>
+        <option value="sec_3">sec_3</option>
+      </select>
+      <br/>
+      <label for="title">タイトル：</label>
+      <input type="text" name="title"/>
+      <br/>
+      <label for="text">内容：</label>
+      <textarea name="text"></textarea>
+      <br/>
+      <label for="start">開始日：</label>
+      <input type="date" name="start"/>
+      <br/>
+      <label for="fixed">期日：</label>
+      <input type="date" name="fixed"/>
+      <br/>
+      <label for="notion">notion：</label>
+      <input type="text" name="notion"/>
+      <br/>
+      <label for="slack">slack：</label>
+      <input type="text" name="slack"/>
+      <br/>
+      <label for="status">ステータス：</label>
+      <select name="status">
+        <option value="未着手">未着手</option>
+        <option value="進行中">進行中</option>
+        <option value="DONE">DONE</option>
+      </select>
+      <br/>
+      <label for="progress">進捗：</label>
+        <select name="progress">
+          <option value="未設定">未設定</option>
+          <option value="入稿前対応中">入稿前対応中</option>
+          <option value="入稿前対応">YAML作成中</option>
+          <option value="QA0回目">QA0回目</option>
+          <option value="QA1回目">QA1回目</option>
+          <option value="QA2回目">QA2回目</option>
+          <option value="配信設定">配信設定</option>
+          <option value="実機確認">実機確認</option>
+        </select>
+      <br/>
+      <label for="cost">工数：</label>
+      <select name="cost">
+        <% (0..40).each do |i| %>
+          <option value="<%= i %>"><%= i %></option>
+        <% end %>
+      </select>
+      <br/>
+      <input type="submit" value="作成">
+    </form>
+  </div>
+</body>
+</html>

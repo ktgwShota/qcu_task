@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+</head>
+<body>
+  <h1>タスク管理APP</h1>
+  
+  <% if data %>
+
+    <div id="optionBox">
+      <div id="filter">
+        <% user = user_number %>
+        <% fixed = fixed_number %>
+        <% data_all = data.select { |key, value| value["status"] != "DONE" } %>
+        <div>
+          <label for="user_filter">担当：</label>
+          <select id="user_filter" name="user" onchange="user_select(this.value)">
+            <option value="0" <% if user == 0 %>selected<% end %>>全て</option>
+            <option value="1" <% if user == 1 %>selected<% end %>>加藤</option>
+            <option value="2" <% if user == 2 %>selected<% end %>>福嶋</option>
+          </select>
+        </div>
+        <div>
+          <label for="fixed_sort">期日：</label>
+          <select id="fixed_sort" name="fixed" onchange="fixed_sort_select(this.value)">
+            <option value="0" <% if fixed == 0 %>selected<% end %>>昇順</option>
+            <option value="1" <% if fixed == 1 %>selected<% end %>>降順</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="taskAdd">
+        <a href="/task">タスク追加</a>
+      </div>
+    </div>
+
+    <div id="costBox">
+      <div class="cost" onclick="toggleQcuMenber()">
+        <div><span>【本日】</span>期日のタスクに必要な工数：<span id="qcuTotalCostDay"><%= get_costs(get_today_fixed_tasks(data_all)) %></span></div>
+        <div class="qcuMenber box_1">
+          <div>加藤：<span class="qcuMenberCost"><%= get_costs(get_today_fixed_tasks(user_filter(data_all, '加藤'))) %></span></div>
+          <div>福嶋：<span class="qcuMenberCost"><%= get_costs(get_today_fixed_tasks(user_filter(data_all, '福嶋'))) %></span></div>
+        </div>
+      </div>
+      <div class="cost" onclick="toggleQcuMenber()">
+        <div><span>【今週】</span>期日のタスクに必要な工数：<span id="qcuTotalCostWeek"><%= get_costs(get_week_fixed_tasks(data_all)) %></span></div>
+        <div class="qcuMenber box_2">
+          <div>加藤：<span class="qcuMenberCost"><%= get_costs(get_week_fixed_tasks(user_filter(data_all, '加藤'))) %></span></div>
+          <div>福嶋：<span class="qcuMenberCost"><%= get_costs(get_week_fixed_tasks(user_filter(data_all, '福嶋'))) %></span></div>
+        </div>
+      </div>
+    </div>
+
+    <% if !user && fixed == 1 %>
+      <div id="mainDefaultContents">
+        <div class="mainDefaultContent">
+          <div class="name">
+            <h2>加藤</h2>
+            <div class="taskBarDay"></div>
+            <div class="taskBarWeek"></div>
+          </div>
+          <div class="data"><%= main_box_content(sort_fixed(user_filter(data_all, '加藤'))) %></div>
+        </div>
+        <div class="mainDefaultContent">
+          <div class="name">
+            <h2>福嶋</h2>
+            <div class="taskBarDay"></div>
+            <div class="taskBarWeek"></div>
+          </div>
+          <div class="data"><%= main_box_content(sort_fixed(user_filter(data_all, '福嶋'))) %></div>
+        </div>
+      <div>
+    <% elsif !user || !user && fixed == 0 %>
+      <div id="mainDefaultContents">
+        <div class="mainDefaultContent">
+          <div class="name">
+            <h2>加藤</h2>
+            <div class="taskBarDay"></div>
+            <div class="taskBarWeek"></div>
+          </div>
+          <div class="data"><%= main_box_content(sort_fixed(user_filter(data_all, '加藤')).reverse) %></div>
+        </div>
+        <div class="mainDefaultContent">
+          <div class="name">
+            <h2>福嶋</h2>
+            <div class="taskBarDay"></div>
+            <div class="taskBarWeek"></div>
+          </div>
+          <div class="data"><%= main_box_content(sort_fixed(user_filter(data_all, '福嶋')).reverse) %></div>
+        </div>
+      <div>
+    <% else %>
+      <div id="mainBox">
+        <% if (user == 0 || !user) && fixed == 0 %>
+          <%= main_box_content(sort_fixed(data_all)) %>
+        <% elsif (user == 0 || !user) && fixed == 1 %>
+          <%= main_box_content(sort_fixed(data_all).reverse) %>
+        <% elsif (user == 0 || !user) %>
+          <%= main_box_content(data_all) %>
+        <% elsif user == 1 && fixed == 0 %>
+          <%= main_box_content(sort_fixed(user_filter(data_all, '加藤'))) %>
+        <% elsif user == 1 && fixed == 1 %>
+          <%= main_box_content(sort_fixed(user_filter(data_all, '加藤')).reverse) %>
+        <% elsif user == 1 %>
+          <%= main_box_content(user_filter(data_all, '加藤')) %>
+        <% elsif user == 2 && fixed == 0 %>
+          <%= main_box_content(sort_fixed(user_filter(data_all, '福嶋'))) %>
+        <% elsif user == 2 && fixed == 1  %>
+          <%= main_box_content(sort_fixed(user_filter(data_all, '福嶋')).reverse) %>
+        <% elsif user == 2 %>
+          <%= main_box_content(user_filter(data_all, '福嶋')) %>
+        <% end %>
+      </div>
+    <% end %>
+  <% else %>
+    <div id="optionBox">
+      <div id="taskAdd">
+        <a href="/task">タスク追加</a>
+      </div>
+    </div>
+    <div id="mainBox">
+      タスクがありません。
+    </div>
+  <% end %>
+
+  <script>
+      function user_select(value) {
+        const url = new URL(window.location.href);
+          if (value === '0') {
+            url.search = '';
+          } else {
+            // 現在のURLとパラメータを（あれば）取得し、パラメータを作成
+            const params = new URLSearchParams(url.search)
+            params.set('user', value);
+            
+            // 作成したパラメータを文字列に変換してURLに追加
+            url.search = params.toString();
+          }
+        // パラメータ追加済みのURLを現在のURLに反映
+        window.location.href = url.toString();
+      }
+      function fixed_sort_select(value) {
+        const url = new URL(window.location.href);
+        const params = new URLSearchParams(url.search)
+        params.set('fixed', value);
+        url.search = params.toString();
+        window.location.href = url.toString();
+      }
+
+      const qcuMenber = 2
+      const qcuTotalCostDayElement = document.getElementById("qcuTotalCostDay");
+      const qcuTotalCostDay = parseInt(qcuTotalCostDayElement.textContent);
+      if (qcuTotalCostDay <= 8 * qcuMenber) {
+        qcuTotalCostDayElement.style.color = "green";
+      } else {
+        qcuTotalCostDayElement.style.color = "red";
+      }
+      const qcuTotalCostWeekElement = document.getElementById("qcuTotalCostWeek");
+      const qcuTotalCostWeek = parseInt(qcuTotalCostWeekElement.textContent);
+      if (qcuTotalCostWeek <= 40 * qcuMenber) {
+        qcuTotalCostWeekElement.style.color = "green";
+      } else {
+        qcuTotalCostWeekElement.style.color = "red";
+      }
+
+      let costArrayForTaskBarCSS_1_day = [];
+      let costArrayForTaskBarCSS_2_week = [];
+      const parentElements_1 = document.querySelectorAll(".qcuMenber.box_1");
+      parentElements_1.forEach((parent) => {
+        const qcuMenberCostElements_1 = parent.querySelectorAll(".qcuMenberCost");
+        qcuMenberCostElements_1.forEach((qcuMenberCostElement_1) => {
+          costArrayForTaskBarCSS_1_day.push(qcuMenberCostElement_1.textContent)
+          const qcuMenberCost_1 = parseInt(qcuMenberCostElement_1.textContent);
+          if (qcuMenberCost_1 <= 8) {
+            qcuMenberCostElement_1.style.color = "green";
+          } else {
+            qcuMenberCostElement_1.style.color = "red";
+          }
+        });
+      });
+      const parentElements_2 = document.querySelectorAll(".qcuMenber.box_2");
+      parentElements_2.forEach((parent) => {
+        const qcuMenberCostElements_2 = parent.querySelectorAll(".qcuMenberCost");
+        qcuMenberCostElements_2.forEach((qcuMenberCostElement_2) => {
+          costArrayForTaskBarCSS_2_week.push(qcuMenberCostElement_2.textContent)
+          const qcuMenberCost_2 = parseInt(qcuMenberCostElement_2.textContent);
+          if (qcuMenberCost_2 <= 40) {
+            qcuMenberCostElement_2.style.color = "green";
+          } else {
+            qcuMenberCostElement_2.style.color = "red";
+          }
+        });
+      });
+
+      const taskBarDay = document.getElementsByClassName('taskBarDay');
+      const taskBarWeek = document.getElementsByClassName('taskBarWeek');
+      for (let i = 0; i < taskBarDay.length; i++) {
+        taskBarDay[i].style.height = costArrayForTaskBarCSS_1_day[i] * 12.5 + '%';
+        if (parseInt(taskBarDay[i].style.height) > 100) {
+          
+          taskBarDay[i].style.background = 'red';
+        }
+      }
+      for (let i = 0; i < taskBarWeek.length; i++) {
+        taskBarWeek[i].style.height = costArrayForTaskBarCSS_2_week[i] * 2.5 + '%';
+        if (parseInt(taskBarWeek[i].style.height) > 100) {
+          taskBarWeek[i].style.background = 'red';
+
+          const newElement = document.createElement('span');
+          newElement.textContent = '💣';
+          const nameElement = document.getElementsByClassName('name');
+          const firstChild = nameElement.firstChild; 
+          nameElement[i].insertBefore(newElement, firstChild);
+        
+          // 両方100%超えた場合
+          if (parseInt(taskBarDay[i].style.height) > 100) {
+            const newElement = document.createElement('span');
+            newElement.textContent = '💣';
+            const nameElement = document.getElementsByClassName('name');
+            const firstChild = nameElement.firstChild; 
+            nameElement[i].insertBefore(newElement, firstChild);
+          }
+        }
+       }
+      
+
+
+
+      
+
+  
+
+      function toggleQcuMenber() {
+        const qcuMenberElements = document.querySelectorAll('.qcuMenber');
+        qcuMenberElements.forEach(function(element) {
+          element.classList.toggle('display');
+        });
+      }
+
+      const statusElements = document.getElementsByClassName("status");
+      for (var i = 0; i < statusElements.length; i++) {
+        const statusElement = statusElements[i];
+        const statusValue = statusElement.innerText;
+        if (statusValue === "進行中") {
+          statusElement.classList.add("green");
+        } else if (statusValue === "未着手") {
+          statusElement.classList.add("red");
+        } else {
+          statusElement.classList.add("default");
+        }
+      }
+  </script>
+</body>
+</html>
