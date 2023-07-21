@@ -22,6 +22,10 @@ def save(data,type)
   end
 end
 
+def esc(text) # エスケープ処理
+  Rack::Utils.escape_html(text)
+end
+
 # トップページ
 get '/' do
   erb :index, locals: { data: load_data }
@@ -36,8 +40,8 @@ end
 post '/form' do
   task_data = {
     SecureRandom.uuid => {
-      'title' => params[:title],
-      'text' => params[:text]
+      'title' => esc(params[:title]),
+      'text' => esc(params[:text])
     }
   }
   save(task_data,'a')
@@ -60,8 +64,8 @@ end
 patch '/task/:id/edit' do
   id = params[:id]
   data = load_data
-  data[id]['title'] = params[:title]
-  data[id]['text'] = params[:text]
+  data[id]['title'] = esc(params[:title])
+  data[id]['text'] = esc(params[:text])
   save(data,'a')
 
   redirect "/task/#{id}"
