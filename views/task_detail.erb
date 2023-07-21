@@ -5,8 +5,8 @@
 </head>
 <body>
   <% if task_data && task_data.any? %>
-    <% task_data.each do |task| %>
-      <li><%= task %></li>
+    <% task_data.each do |key, value| %>
+      <li><%= key %>:<%= value %></li>
     <% end %>
   <% end %>
   <div><a href="/task/<%= task_id %>/edit">編集</a></div>

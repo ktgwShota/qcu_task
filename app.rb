@@ -11,24 +11,20 @@ set :public_folder, "#{File.dirname(__FILE__)}/public"
 # セッション使用
 enable :sessions
 
+def load_data
+  data_file = File.join(settings.root, 'form/data.yml')
+  File.exist?(data_file) ? YAML.load_file(data_file) : {}
+end
+
+def save(data,type)
+  File.open('form/data.yml', type) do |file|
+    file.write(data.to_yaml.sub(/\A---\n/, '')) # 最初の`---`を削除して保存
+  end
+end
+
 # トップページ
 get '/' do
-  data_file = File.join(settings.root, 'form/data.yml')
-  data = File.exist?(data_file) ? YAML.load_file(data_file) : {}
-
-  def main_box_content(data)
-    html = ''
-    data.each do |key, value|
-      html += <<~HTML
-        <div class="content">
-          <a href="/task/#{key}"><div>#{value['title']}</div><div>#{value['text']}</div></a>
-        </div>
-      HTML
-    end
-    html
-  end
-
-  erb :index, locals: { data: data }
+  erb :index, locals: { data: load_data }
 end
 
 # タスク追加ページ
@@ -38,11 +34,13 @@ end
 
 # タスク追加ページから送信されたデータを処理
 post '/form' do
-  file = File.open('form/data.yml', 'a')
-  file.write("#{SecureRandom.uuid}:\n")
-  file.write("  title: #{params[:title]}\n")
-  file.write("  text: #{params[:text]}\n")
-  file.close
+  task_data = {
+    SecureRandom.uuid => {
+      'title' => params[:title],
+      'text' => params[:text]
+    }
+  }
+  save(task_data,'a')
 
   redirect '/'
 end
@@ -50,9 +48,7 @@ end
 # タスク詳細ページ
 get '/task/:id' do
   task_id = params[:id]
-  data_file = File.join(settings.root, 'form/data.yml')
-  data = File.exist?(data_file) ? YAML.load_file(data_file) : {}
-  erb :task_detail, locals: { task_data: data[task_id], task_id: task_id }
+  erb :task_detail, locals: { task_data: load_data[task_id], task_id: task_id }
 end
 
 # タスク詳細ページを編集するページ
@@ -63,12 +59,10 @@ end
 # タスク詳細ページを編集する処理
 patch '/task/:id/edit' do
   id = params[:id]
-  data = YAML.load_file('form/data.yml')
+  data = load_data
   data[id]['title'] = params[:title]
   data[id]['text'] = params[:text]
-  File.open('form/data.yml', 'w') do |file|
-    file.write(data.to_yaml)
-  end
+  save(data,'a')
 
   redirect "/task/#{id}"
 end
@@ -76,10 +70,9 @@ end
 # タスクを削除　
 delete '/task/:id' do
   task_id = params[:id]
-  data_file = File.join(settings.root, 'form/data.yml')
-  data = File.exist?(data_file) ? YAML.load_file(data_file) : {}
+  data = load_data
   data.delete(task_id)
-  File.open(data_file, 'w') { |f| f.write(data.to_yaml) }
+  save(data,'w')
 
   redirect '/'
 end

@@ -9,7 +9,15 @@
   <div id="taskAdd">
     <a href="/task">タスク追加</a>
   </div>
-  <%= main_box_content(data) %>
-
+  <% if data %>
+    <% data.each do |key, value| %>
+      <div class="content">
+        <a href="/task/<%= key %>">
+          <div><%= value['title'] %></div>
+          <div><%= value['text'] %></div>
+        </a>
+      </div>
+    <% end %>
+  <% end %>
 </body>
 </html>
