@@ -13,8 +13,8 @@
     <% data.each do |key, value| %>
       <div class="content">
         <a href="/task/<%= key %>">
-          <div><%= value['title'] %></div>
-          <div><%= value['text'] %></div>
+          <div><%= esc(value['title']) %></div>
+          <div><%= esc(value['text']) %></div>
         </a>
       </div>
     <% end %>
