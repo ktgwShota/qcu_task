@@ -2,7 +2,8 @@
 
 source 'https://rubygems.org'
 
-gem 'date'
-gem 'securerandom'
+gem 'activerecord'
 gem 'sinatra'
-gem 'yaml'
+gem 'sinatra-contrib'
+gem 'thin'
+gem 'pg'

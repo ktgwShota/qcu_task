@@ -10,11 +10,11 @@
     <a href="/task">タスク追加</a>
   </div>
   <% if data %>
-    <% data.each do |key, value| %>
+    <% data.each do |key| %>
       <div class="content">
-        <a href="/task/<%= key %>">
-          <div><%= esc(value['title']) %></div>
-          <div><%= esc(value['text']) %></div>
+        <a href="/task/<%= key['id'] %>">
+          <div><%= esc(key['title']) %></div>
+          <div><%= esc(key['text']) %></div>
         </a>
       </div>
     <% end %>

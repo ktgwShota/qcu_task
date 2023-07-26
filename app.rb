@@ -4,6 +4,8 @@ require 'date'
 require 'sinatra'
 require 'securerandom'
 require 'yaml'
+require 'pg'
+require 'pp'
 
 # CSS JS 画像などの使用に必要
 set :public_folder, "#{File.dirname(__FILE__)}/public"
@@ -11,15 +13,16 @@ set :public_folder, "#{File.dirname(__FILE__)}/public"
 # セッション使用
 enable :sessions
 
-def load_data
-  data_file = File.join(settings.root, 'form/data.yml')
-  File.exist?(data_file) ? YAML.load_file(data_file) : {}
-end
-
-def save(data,type)
-  File.open('form/data.yml', type) do |file|
-    file.write(data.to_yaml.sub(/\A---\n/, '')) # 最初の`---`を削除して保存
-  end
+def conn
+  conn = PG.connect(
+    host: 'localhost', # データベースのサーバーがあるホスト名 or IPアドレス
+    dbname: 'qcu' # 接続するDB名
+    
+    # port: 5432, # ポート番号 何も指定しない場合はデフォルトの5432が指定される    
+    # 今回はDBアクセス時に認証を必要としていないので必要なし
+    # user: 'u', # ユーザー名 
+    # password: 'p' # パスワード
+  )
 end
 
 helpers do
@@ -30,7 +33,10 @@ end
 
 # トップページ
 get '/' do
-  erb :index, locals: { data: load_data }
+  conn()
+  result = conn.exec('SELECT * FROM task')
+
+  erb :index, locals: { data: result }
 end
 
 # タスク追加ページ
@@ -40,13 +46,25 @@ end
 
 # タスク追加ページから送信されたデータを処理
 post '/form' do
-  task_data = {
-    SecureRandom.uuid => {
-      'title' => params[:title],
-      'text' => params[:text]
-    }
-  }
-  save(task_data,'a')
+  conn()
+  conn.exec_params(
+    'INSERT INTO task (
+      id,
+      title,
+      text
+    )
+    VALUES (
+      $1,
+      $2,
+      $3
+    )',
+    [
+      SecureRandom.uuid,
+      params[:title],
+      params[:text]
+      
+    ]
+  )
 
   redirect '/'
 end
@@ -54,7 +72,17 @@ end
 # タスク詳細ページ
 get '/task/:id' do
   task_id = params[:id]
-  erb :task_detail, locals: { task_data: load_data[task_id], task_id: task_id }
+
+  conn()
+  result = conn.exec('SELECT * FROM task WHERE id = $1', [task_id])
+  html = []
+  result.each do |row|
+    html << "id: #{row['id']}"
+    html << "title: #{row['title']}"
+    html << "text: #{row['text']}"
+  end
+
+  erb :task_detail, locals: { task_id: task_id, task_data: html }
 end
 
 # タスク詳細ページを編集するページ
@@ -65,20 +93,23 @@ end
 # タスク詳細ページを編集する処理
 patch '/task/:id/edit' do
   id = params[:id]
-  data = load_data
-  data[id]['title'] = params[:title]
-  data[id]['text'] = params[:text]
-  save(data,'a')
+
+  conn()
+  conn.exec_params(
+    "UPDATE task
+      SET title = $1,
+          text = $2
+      WHERE id = $3;",
+      [params[:title], params[:text], id]
+  )
 
   redirect "/task/#{id}"
 end
 
 # タスクを削除　
 delete '/task/:id' do
-  task_id = params[:id]
-  data = load_data
-  data.delete(task_id)
-  save(data,'w')
+  conn()
+  conn.exec_params('DELETE FROM task WHERE id = $1', [params[:id]])
 
   redirect '/'
 end
