@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+  <form action="/task/<%= task_id %>/edit" method="post">
+    <input type="hidden" name="_method" value="PATCH" />
+    <label for="title">タイトル：</label>
+    <input type="text" name="title"/>
+    <br/>
+    <label for="text">内容：</label>
+    <textarea name="text"></textarea>
+    <br/>
+    <input type="submit" value="更新">
+  </form>
+</body>
+</html>

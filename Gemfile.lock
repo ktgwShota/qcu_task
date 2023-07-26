@@ -1,0 +1,31 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    date (3.3.3)
+    mustermann (3.0.0)
+      ruby2_keywords (~> 0.0.1)
+    rack (2.2.7)
+    rack-protection (3.0.6)
+      rack
+    ruby2_keywords (0.0.5)
+    securerandom (0.2.2)
+    sinatra (3.0.6)
+      mustermann (~> 3.0)
+      rack (~> 2.2, >= 2.2.4)
+      rack-protection (= 3.0.6)
+      tilt (~> 2.0)
+    tilt (2.2.0)
+    yaml (0.2.1)
+
+PLATFORMS
+  x86_64-darwin-21
+  x86_64-linux
+
+DEPENDENCIES
+  date
+  securerandom
+  sinatra
+  yaml
+
+BUNDLED WITH
+   2.4.12

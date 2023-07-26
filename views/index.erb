@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+</head>
+<body>
+  <h1>QCUタスク管理APP</h1>
+  <div id="taskAdd">
+    <a href="/task">タスク追加</a>
+  </div>
+  <% if data %>
+    <% data.each do |key, value| %>
+      <div class="content">
+        <a href="/task/<%= key %>">
+          <div><%= esc(value['title']) %></div>
+          <div><%= esc(value['text']) %></div>
+        </a>
+      </div>
+    <% end %>
+  <% end %>
+</body>
+</html>

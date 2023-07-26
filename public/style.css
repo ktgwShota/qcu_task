@@ -1,0 +1,222 @@
+h1 {
+  font-size: 25px;
+}
+
+body {
+  margin: 20px;
+}
+
+h1 {
+  text-align: center;
+}
+
+#optionBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 25px;
+  margin-bottom: 10px;
+}
+
+#mainBox {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.content {
+  border: solid 1px #DDD;
+  padding: 10px;   
+  width: calc(25% - 37.5px);
+  position: relative;
+}
+
+.content:last-child {
+  border-right: solid 1px #DDD;
+}
+
+.content div {
+  font-size: 14px;
+  margin: 5px;
+}
+.content div:nth-child(1) {
+  font-size: 17px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  border-bottom: solid 1px #EEE;
+  padding-bottom: 10px;
+  padding-top: 40px;
+}
+.content:hover {
+  border: solid 1px orange;
+}
+.content a {
+  text-decoration: none;
+  color: #333;
+}
+
+#taskAdd {
+  display: inline-block;
+  background: orange;
+  text-decoration: none;
+  padding: 10px 15px;
+}
+
+#taskAdd a {
+  text-decoration: none;
+  color: #FFF;
+  font-size: 14px;
+}
+
+.status {
+  display: inline-block;
+  padding: 5px 10px;
+  color: white;
+  font-size: 13px;
+  font-weight: bold;
+  position: absolute;
+  top: 7.5px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-right: solid 5px #FFF;
+}
+
+.status.green {
+  background: green;
+}
+.status.red{
+  background: red;
+}
+.status.default{
+  background: gray;
+}
+
+#costBox {
+  text-align: center;
+}
+
+#costBox {
+  display: flex;
+  justify-content: center;
+  max-width: 780px;
+  margin: 20px auto 30px;
+  gap: 15px;
+}
+
+#costBox span {
+  font-weight: bold;
+}
+
+#costBox .cost:nth-child(2) {
+  border-left: solid 1px #AAA;
+  padding-left: 10px;
+}
+
+.qcuMenber {
+  margin: 15px 0 0;
+  display: none;
+}
+
+.qcuMenber div {
+  width: 100%;
+}
+
+.qcuMenber.display{
+  display: block;
+}
+
+#mainDefaultContents {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+  width: 100%;
+}
+
+.mainDefaultContent {
+  display: flex;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+.mainDefaultContent .name {
+  position: relative;
+  text-align: left;
+  margin: 0 20px 0 0;
+  display: flex;
+  background: gray;
+  color: white;
+  padding: 5px 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+}
+
+.mainDefaultContent h2 {
+  font-size: 13px;
+  font-weight: bold;
+  z-index: 999;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+.taskBarDay {
+    background: green;
+    width: 50%;
+    position: absolute;
+    max-height: 100%;
+    height: 0;
+    bottom: 0;
+    left: 0;
+}
+.taskBarWeek {
+    background: green;
+    width: 50%;
+    position: absolute;
+    max-height: 100%;
+    height: 0;
+    bottom: 0;
+    right: 0;
+}
+.name span {
+  z-index: 99;
+  position: absolute;
+  font-size: 25px;
+  margin-top: -45px;
+}
+.data {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow: scroll;
+  width: 100%;
+}
+.data .content {
+  min-width: calc(25% - 37.5px);
+}
+
+select {
+  padding: 5px;
+}
+
+#filter div {
+  margin: 10px 0;
+}
+.content,
+.cost > div:nth-child(1) {
+  cursor: pointer;
+}
+.cost > div:nth-child(1):after {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    content: "\f107";
+    margin: 0 0 0 10px;
+    font-size: 20px;
+    position: relative;
+    top: 2px;
+    color: gray;
+}
+.cost > div:nth-child(1):hover::after {
+  color: orange;
+}

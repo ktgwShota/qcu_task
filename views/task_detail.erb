@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="../detail_style.css">
+</head>
+<body>
+  <% if task_data && task_data.any? %>
+    <% task_data.each do |key, value| %>
+      <li><%= esc(key) %>:<%= esc(value) %></li>
+    <% end %>
+  <% end %>
+  <div><a href="/task/<%= task_id %>/edit">編集</a></div>
+  <form action="/task/<%= task_id %>" method="POST" id="deleteForm">
+    <input type="hidden" name="_method" value="DELETE">
+    <input type="submit" value="削除" id="delete">
+  </form>
+</body>
+</html>

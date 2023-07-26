@@ -1,0 +1,68 @@
+body {
+  margin: 20px;
+}
+
+#mainBox {
+  width: 500px;
+  margin: 0 auto;
+}
+
+#update {
+  width: 50px;
+  height: 30px;
+  font-size: 14px;
+}
+
+#content div,
+#updateContent div,
+input,
+select {
+  font-size: 15px;
+  margin: 15px 0;
+}
+
+#updateContent {
+  border: solid 1px #CCC;
+  padding: 15px 25px 25px 25px;
+}
+
+input,
+select,
+textarea {
+  border: none;
+  width: calc(100% - 110px);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+textarea {
+  height: 80px;
+  vertical-align: middle;
+  margin: 20px 0;
+}
+
+input[name="title"] {
+  font-size: 19px;
+  font-weight: bold;
+  text-align: center;
+  width: 100%;
+  border-bottom: solid 1px #CCC;
+  padding-bottom: 25px;
+}
+
+label {
+  display: inline-block;
+  width: 100px;
+  text-align: left;
+}
+
+#taskList {
+  margin: 25px;
+  text-align: center;
+}
+
+#delete {
+  width: 100%;
+  padding: 20px;
+  margin: 0;
+}
