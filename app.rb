@@ -3,7 +3,6 @@
 require 'date'
 require 'sinatra'
 require 'securerandom'
-require 'yaml'
 require 'pg'
 
 # CSS JS 画像などの使用に必要
@@ -12,16 +11,15 @@ set :public_folder, "#{File.dirname(__FILE__)}/public"
 # セッション使用
 enable :sessions
 
-def conn
-  PG.connect(
-    host: 'localhost', # データベースのサーバーがあるホスト名 or IPアドレス
-    dbname: 'qcu' # 接続するDB名
-    # port: 5432, # ポート番号 何も指定しない場合はデフォルトの5432が指定される
-    # 今回はDBアクセス時に認証を必要としていないので必要なし
-    # user: 'u', # ユーザー名
-    # password: 'p' # パスワード
-  )
-end
+host = ENV['DB_HOST'] || 'localhost'
+port = ENV['DB_PORT'] || '5432'
+dbname = ENV['DB_NAME'] || 'qcu'
+
+$db_conn = PG.connect(
+  host: host,
+  port: port,
+  dbname: dbname
+)
 
 helpers do
   # エスケープ処理
@@ -32,10 +30,7 @@ end
 
 # トップページ
 get '/' do
-  conn
-  result = conn.exec('SELECT * FROM task')
-
-  erb :index, locals: { data: result }
+  erb :index, locals: { data: $db_conn.exec('SELECT * FROM task') }
 end
 
 # タスク追加ページ
@@ -45,8 +40,7 @@ end
 
 # タスク追加ページから送信されたデータを処理
 post '/form' do
-  conn
-  conn.exec_params(
+  $db_conn.exec_params(
     'INSERT INTO task (
       id,
       title,
@@ -72,8 +66,7 @@ end
 get '/task/:id' do
   task_id = params[:id]
 
-  conn
-  result = conn.exec('SELECT * FROM task WHERE id = $1', [task_id])
+  result = $db_conn.exec('SELECT * FROM task WHERE id = $1', [task_id])
   html = []
   result.each do |row|
     html << "id: #{row['id']}"
@@ -93,8 +86,7 @@ end
 patch '/task/:id/edit' do
   id = params[:id]
 
-  conn
-  conn.exec_params(
+  $db_conn.exec_params(
     "UPDATE task
       SET title = $1,
           text = $2
@@ -107,8 +99,7 @@ end
 
 # タスクを削除　
 delete '/task/:id' do
-  conn
-  conn.exec_params('DELETE FROM task WHERE id = $1', [params[:id]])
+  $db_conn.exec_params('DELETE FROM task WHERE id = $1', [params[:id]])
 
   redirect '/'
 end

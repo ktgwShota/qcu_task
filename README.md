@@ -17,10 +17,11 @@ brew services start postgresql@14
 createdb qcu
 psql qcu
 CREATE TABLE task (
+    id VARCHAR(255),
     title VARCHAR(255),        
     text TEXT
 );
-
+```
 
 ## 5. ローカル環境を立ち上げ、アクセスする
 - 次のコマンドを実行 `ruby app.rb` 
