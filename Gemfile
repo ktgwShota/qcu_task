@@ -2,7 +2,7 @@
 
 source 'https://rubygems.org'
 
-gem 'date'
-gem 'securerandom'
+gem 'erb_lint'
+gem 'pg'
 gem 'sinatra'
-gem 'yaml'
+gem 'sinatra-contrib'
